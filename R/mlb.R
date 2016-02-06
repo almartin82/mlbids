@@ -99,7 +99,7 @@ scrape_new_mlbids <- function(
     tryCatch({
       m <- mlb(i)
       players[[paste0('p', i)]] <- m
-      if (verbose) cat(m$Name); cat('\n')
+      if (verbose) cat(m$FullName); cat('\n')
     }, error = function(e) {
       cat("failed on ", i, ': ', conditionMessage(e), "\n")
     })
@@ -117,5 +117,5 @@ scrape_new_mlbids <- function(
   save(search_range, file = 'data-raw/search_range.Rda')
 
   #write the search space and data file
-  write.csv(final, file = 'data-raw/mlbids.csv', row_names = FALSE)
+  write.csv(final, file = 'data-raw/mlbids.csv', row.names = FALSE)
 }
