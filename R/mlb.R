@@ -56,7 +56,26 @@ mlb <- function(id) {
 }
 
 
-scrape_new_mlbids <- function(exclude_known = TRUE, verbose = TRUE) {
+#' Scrape new mlbids
+#'
+#' @description a utility function that looks for newly added players to mlb.com,
+#' or regenerates the master list of players in data-raw/mlb.csv
+#' @param exclude_known should we ignore the players who have already have
+#' records in mlb.csv?  default is TRUE.
+#' @param verbose output current player name to the console.  default is FALSE
+#' @param expand_search at the close, we'll expand the number of ids to check
+#' by some fixed number, to make sure that we are looking high enough
+#' to get new ones.  default is 200.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+scrape_new_mlbids <- function(
+  exclude_known = TRUE,
+  verbose = TRUE,
+  expand_search = 200) {
+
   #read in the data file
   extant_mlbids <- read.csv('data-raw/mlbids.csv', stringsAsFactors = FALSE)
 
@@ -93,8 +112,8 @@ scrape_new_mlbids <- function(exclude_known = TRUE, verbose = TRUE) {
   #bind extant and new
   final <- rbind(extant_mlbids, new_mlbids)
 
-  #add 500 new ids to the original space and save
-  search_range <- c(min(search_range), max(search_range) + 100)
+  #add new ids to the original space and save
+  search_range <- c(min(search_range), max(final$mlbid) + expand_search)
   save(search_range, file = 'data-raw/search_range.Rda')
 
   #write the search space and data file
