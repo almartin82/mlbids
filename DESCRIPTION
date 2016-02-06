@@ -1,0 +1,18 @@
+Package: mlbids
+Type: Package
+Title: Tools for standardizing MLB player metadata
+Version: 0.1
+Date: 2016-02-04
+Authors@R: person("Andrew", "Martin", role = c("aut","cre"), email = "almartin@gmail.com")
+Description: Because there needs to be a universal lookup system of names and
+    ids across different (mlb, yahoo, espn, cbs) universes.
+License: file LICENSE
+LazyData: TRUE
+Depends:
+    dplyr,
+    httr,
+    magrittr,
+    rvest
+Suggests:
+    testthat
+RoxygenNote: 5.0.1
