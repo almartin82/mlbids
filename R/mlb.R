@@ -63,18 +63,19 @@ mlb <- function(id) {
 #' @param exclude_known should we ignore the players who have already have
 #' records in mlb.csv?  default is TRUE.
 #' @param verbose output current player name to the console.  default is FALSE
-#' @param expand_search at the close, we'll expand the number of ids to check
+#' @param expand_range at the close, we'll expand the number of ids to check
 #' by some fixed number, to make sure that we are looking high enough
 #' to get new ones.  default is 200.
 #'
-#' @return
+#' @return 'OK' if function completes
 #' @export
-#'
-#' @examples
+
 scrape_new_mlbids <- function(
   exclude_known = TRUE,
   verbose = TRUE,
-  expand_search = 200) {
+  expand_range = 200,
+  backtrack_range = 0
+  ) {
 
   #read in the data file
   extant_mlbids <- read.csv('data-raw/mlbids.csv', stringsAsFactors = FALSE)
@@ -90,18 +91,24 @@ scrape_new_mlbids <- function(
   }
 
   #iterate over the search range and look up
-  sprintf('looking up ids from %s... to ...%s', head(search_seq), tail(search_seq))
+  if (verbose) {
+    work <- sprintf(
+      'looking up ids from %s... to ...%s',
+      head(search_seq) %>% unlist() %>% paste(., collapse = ', '),
+      tail(search_seq) %>% unlist() %>% paste(., collapse = ', ')
+    )
+    cat(work); cat('\n\n')
+  }
 
   players <- list()
   for (i in search_seq) {
-    if (verbose) cat(i); cat('...')
-
+    if (verbose) cat(paste0(i,'...'))
     tryCatch({
       m <- mlb(i)
       players[[paste0('p', i)]] <- m
-      if (verbose) cat(m$FullName); cat('\n')
+      if (verbose) cat(paste(m$name), m$dob, '\n')
     }, error = function(e) {
-      cat("failed on ", i, ': ', conditionMessage(e), "\n")
+      cat("failed on", i, '|', conditionMessage(e), "\n")
     })
   }
 
@@ -109,13 +116,17 @@ scrape_new_mlbids <- function(
   sprintf('read %s new players from mlb.com!', length(players))
   new_mlbids <- dplyr::bind_rows(players)
 
+  #remove any rows that were brought down fresh
+  extant_mlbids <- anti_join(extant_mlbids, new_mlbids, by = 'mlbid')
   #bind extant and new
   final <- rbind(extant_mlbids, new_mlbids)
 
   #add new ids to the original space and save
-  search_range <- c(min(search_range), max(final$mlbid) + expand_search)
+  search_range <- c(min(search_range), max(final$mlbid) + expand_range)
   save(search_range, file = 'data-raw/search_range.Rda')
 
   #write the search space and data file
   write.csv(final, file = 'data-raw/mlbids.csv', row.names = FALSE)
+
+  'OK'
 }

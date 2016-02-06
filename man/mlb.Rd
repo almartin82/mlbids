@@ -14,7 +14,7 @@ if given a valid id, a data frame with player name, dob, id, etc.
 }
 \description{
 gets the name and other demographic data for a player, given
-a mlbid value (an integer between 110001 and something roughly in the ~ 700000s)
+a mlbid value (an integer between 110001 and something roughly in the ~ 650000s)
 }
 \examples{
 ex <- mlb(110001)
