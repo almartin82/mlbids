@@ -11,8 +11,10 @@ LazyData: TRUE
 Depends:
     dplyr,
     httr,
+    lubridate,
     magrittr,
-    rvest
+    rvest,
+    stringr
 Suggests:
     testthat
 RoxygenNote: 5.0.1
