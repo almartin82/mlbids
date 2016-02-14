@@ -17,8 +17,8 @@ scrape_new_ids <- function(
   id_type = 'mlb',
   exclude_known = TRUE,
   verbose = TRUE,
-  expand_range = 200,
-  backtrack_range = 0
+  expand_range = 500,
+  backtrack_range = -500
 ) {
 
   #read in the data file
