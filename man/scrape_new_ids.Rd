@@ -5,7 +5,7 @@
 \title{Scrape new ids}
 \usage{
 scrape_new_ids(id_type = "mlb", exclude_known = TRUE, verbose = TRUE,
-  expand_range = 200, backtrack_range = 0)
+  expand_range = 500, backtrack_range = -500)
 }
 \arguments{
 \item{id_type}{c('mlb', 'yahoo')}
