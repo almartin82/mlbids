@@ -2,7 +2,7 @@
 % Please edit documentation in R/scrape.R
 \name{scrape_new_ids}
 \alias{scrape_new_ids}
-\title{Scrape new ids}
+\title{Scrape new ids for MLB and Yahoo}
 \usage{
 scrape_new_ids(id_type = "mlb", exclude_known = TRUE, verbose = TRUE,
   expand_range = 500, backtrack_range = -500)
@@ -20,7 +20,7 @@ by some fixed number, to make sure that we are looking high enough
 to get new ones.  default is 200.}
 }
 \value{
-'OK' if function completes
+writes data to data-raw/whatever.csv. returns 'OK' if function completes
 }
 \description{
 a utility function that looks for newly added players from

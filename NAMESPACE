@@ -2,6 +2,7 @@
 
 export(cbs)
 export(cbs_bulk)
+export(cbs_scrape)
 export(mlb)
 export(scrape_new_ids)
 export(yahoo)

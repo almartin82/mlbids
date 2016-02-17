@@ -110,6 +110,13 @@ cbs_bulk <- function() {
 }
 
 
+#' Scrape new ids for CBS
+#'
+#' @description hits the cbs player endpoint, then calls each playerid
+#' to bring down additional detail (DOB, etc) from the cbs player pagers
+#' @return writes data to data-raw/cbsids.csv. returns 'OK' if function completes
+#' @export
+
 cbs_scrape <- function() {
   p <- cbs_bulk()
 
@@ -131,9 +138,11 @@ cbs_scrape <- function() {
 
   final <- p %>%
     dplyr::left_join(
-      scraped,
+      scraped %>% dplyr::select(-position, -name),
       by = c('id' = 'cbsid')
   )
 
-  final
+  write.csv(final, file = 'data-raw/cbsids.csv', row.names = FALSE)
+
+  'OK'
 }

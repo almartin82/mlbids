@@ -1,4 +1,4 @@
-#' Scrape new ids
+#' Scrape new ids for MLB and Yahoo
 #'
 #' @description a utility function that looks for newly added players from
 #' one of the fantasy providers
@@ -10,7 +10,7 @@
 #' by some fixed number, to make sure that we are looking high enough
 #' to get new ones.  default is 200.
 #'
-#' @return 'OK' if function completes
+#' @return writes data to data-raw/whatever.csv. returns 'OK' if function completes
 #' @export
 
 scrape_new_ids <- function(
