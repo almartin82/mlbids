@@ -11,6 +11,7 @@ LazyData: TRUE
 Depends:
     dplyr,
     httr,
+    jsonlite,
     lubridate,
     magrittr,
     rvest,

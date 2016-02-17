@@ -79,7 +79,61 @@ cbs_bulk <- function() {
   )
 
   cbs_text <- content(r, as = "text")
-  cbs_json <- jsonlite::fromJSON(cbs_text, simplifyVector = FALSE)
+  cbs_list <- jsonlite::fromJSON(cbs_text, simplifyVector = FALSE)
+  players_json <- jsonlite::toJSON(cbs_list$body$players)
+  players <- jsonlite::fromJSON(players_json, flatten = TRUE)
 
-  list2df(cbs_json$body$players)
+  clean_players <- list()
+
+  for (i in 1:ncol(players)) {
+    this_col <- players[, i]
+    this_col <- lapply(X = this_col, function(x) {
+      x <- unlist(x)
+      ifelse(is.null(x), NA, x)
+    })
+
+    this_df <- data.frame(
+      foo = this_col %>% unlist(),
+      stringsAsFactors = FALSE
+    )
+    names(this_df)[1] <- names(players)[i]
+    clean_players[[i]] <- this_df
+  }
+
+  clean_players_df <- dplyr::bind_cols(clean_players)
+
+  clean_players_df %>%
+    dplyr::filter(!is.na(pro_status)) %>%
+    dplyr::select(
+      -icons.video, -icons.injury, -icons.cold,
+      -icons.hot, -icons.suspension, -icons.headline)
+}
+
+
+cbs_scrape <- function() {
+  p <- cbs_bulk()
+
+  player_detail <- list()
+
+  for (i in p$id) {
+    print(i)
+
+    tryCatch({
+      this_player <- cbs(i)
+      player_detail[[i]] <- this_player
+    }, error = function(e) {
+      cat("failed on", i, '|', conditionMessage(e), "\n")
+    })
+
+  }
+
+  scraped <- dplyr::bind_rows(player_detail)
+
+  final <- p %>%
+    dplyr::left_join(
+      scraped,
+      by = c('id' = 'cbsid')
+  )
+
+  final
 }
