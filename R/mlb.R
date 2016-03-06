@@ -22,33 +22,39 @@ mlb <- function(id) {
   pos <- h %>% html_nodes('.player-vitals ul li') %>% extract(1) %>% html_text()
   full_name <- h %>% html_nodes(".full-name") %>% html_text() %>%
     gsub('Full Name: ', '', .) %>% gsub('\n', ' ', .)
-  bio1 <- h %>% html_nodes('.full-name+ li') %>% html_text() %>%
-    gsub('\n', ' ', .)
-  bio2 <- h %>% html_nodes('.full-name+ li+ li') %>% html_text() %>%
-    gsub('\n', ' ', .)
 
-  nickname <- ifelse(
-    grepl('Nickname:', bio1, fixed = TRUE),
-    bio1 %>% gsub('Nickname: ', '', .), NA
+
+  bio <- h %>% html_nodes('.player-bio') %>% extract(1) %>%
+    html_nodes('ul') %>% extract(1)
+
+  bio_data <- bio %>%
+    html_nodes('li') %>%
+    xml_text() %>%
+    lapply(., function(x) gsub('\n', ' ', x)) %>%
+    unlist() %>%
+    strsplit(., ': ')
+
+  bio_keys <- lapply(bio_data, function(x) extract(x, 1)) %>%
+    unlist() %>% trim_whitespace()
+  bio_values <- lapply(bio_data, function(x) extract(x, 2)) %>%
+    unlist() %>% trim_whitespace()
+
+  bio_df <- data.frame(
+    keys = bio_keys,
+    values = bio_values,
+    stringsAsFactors = FALSE
   )
 
-  dob <- ifelse(
-    grepl('Born:', bio1, fixed = TRUE),
-    bio1 %>% gsub('Born: ', '', .),
-    ifelse(
-      grepl('Born:', bio2, fixed = TRUE),
-      bio2 %>% gsub('Born: ', '', .),
-      NA
-    )
-  )
+  nickname <- bio_df[bio_df$keys == 'Nickname', 'values']
+  dob <- bio_df[bio_df$keys == 'Born', 'values']
 
   player <- data.frame(
     'mlbid' = id,
     'name' = name,
     'position' = pos,
     'full_name' = full_name,
-    'nickname' = nickname,
-    'dob' = dob,
+    'nickname' = ifelse(length(nickname) == 0, NA, nickname),
+    'dob' = ifelse(length(dob) == 0, NA, dob),
     stringsAsFactors = FALSE
   )
 
