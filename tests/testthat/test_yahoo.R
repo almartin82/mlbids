@@ -8,3 +8,9 @@ test_that("yahoo response returns valid player data", {
   expect_equal(y$name, 'Mike Trout')
 })
 
+
+test_that("yahoo response raises error for known problematic id", {
+
+  expect_error(yahoo(1899))
+
+})

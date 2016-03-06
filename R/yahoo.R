@@ -13,6 +13,12 @@ yahoo <- function(id) {
   if (!resp$status_code == 200) {
     stop('Bad response from yahoo.com')
   }
+  #some yahoo responses are bad, but still return 200.  because of course.
+  y_title <- h %>% html_nodes('title') %>% html_text()
+  if (length(y_title) == 0) {
+    stop('Bad response from yahoo.com')
+  }
+
   h <- read_html(resp$content)
 
   name <- h %>% html_nodes(".player-info h1") %>% html_text()

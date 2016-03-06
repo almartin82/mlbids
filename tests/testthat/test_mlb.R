@@ -24,5 +24,6 @@ test_that('mlb throws an error for known bad value', {
 
 test_that('evan longoria test (prononciation field)', {
   m <- mlb(446334)
+  expect_equal(m$nickname, 'Longo')
   expect_equal(m$dob, '10/7/1985 in Downey, CA')
 })

@@ -1,0 +1,40 @@
+---
+title: "redo_mlb"
+output: html_document
+---
+
+Get the existing mlbids
+
+```{r}
+
+extant_mlb <- read.csv(
+    'data-raw/mlbids.csv',
+    stringsAsFactors = FALSE
+  )
+
+extant_mlbids <- extant_mlb$mlbid %>% sort()
+```
+
+Loop over and read
+
+```{r}
+
+verbose <- TRUE
+players <- list()
+
+for (i in extant_mlbids) {
+  if (verbose) cat(paste0(i,'...'))
+  tryCatch({
+    m <- do.call(mlb, list('id' = i))
+    players[[paste0('p', i)]] <- m
+    if (verbose) cat(paste(m$name), m$dob, '\n')
+  }, error = function(e) {
+    cat("failed on", i, '|', conditionMessage(e), "\n")
+  })
+}
+
+#bind rows
+sprintf('read %s new players from %s.com!', length(players), id_type)
+new_ids <- dplyr::bind_rows(players)
+
+```
