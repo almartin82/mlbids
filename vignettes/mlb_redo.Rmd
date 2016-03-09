@@ -8,16 +8,24 @@ Get the existing mlbids
 ```{r}
 
 extant_mlb <- read.csv(
-    'data-raw/mlbids.csv',
-    stringsAsFactors = FALSE
-  )
+  'data-raw/mlbids.csv',
+  stringsAsFactors = FALSE
+)
 
-extant_mlbids <- extant_mlb$mlbid %>% sort()
+```
+
+Limit to only missing dob
+```{r}
+
+mask <- lapply(extant_mlb$dob, function(x) nchar(x) == 0) %>% unlist()
+
+extant_mlb <- extant_mlb[mask, ]
 ```
 
 Loop over and read
 
 ```{r}
+extant_mlbids <- extant_mlb$mlbid %>% sort()
 
 verbose <- TRUE
 players <- list()
@@ -36,5 +44,12 @@ for (i in extant_mlbids) {
 #bind rows
 sprintf('read %s new players from %s.com!', length(players), id_type)
 new_ids <- dplyr::bind_rows(players)
+
+extant_mlb <- anti_join(extant_mlb, new_ids, by = 'mlbid')
+#bind extant and new
+final <- rbind(extant_mlb, new_ids)
+
+write.csv(final, file = sprintf('data-raw/%sids.csv', 'mlb'), row.names = FALSE)
+
 
 ```
