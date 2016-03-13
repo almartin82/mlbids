@@ -23,12 +23,12 @@ scrape_new_ids <- function(
 
   #read in the data file
   extant_ids <- read.csv(
-    sprintf('data-raw/%sids.csv', id_type),
+    file.path('data-raw', sprintf('%sids.csv', id_type)),
     stringsAsFactors = FALSE
   )
 
   #read in the range of ids to search
-  load(file = sprintf('data-raw/%s_search_range.Rda', id_type))
+  load(file = file.path('data-raw', sprintf('%s_search_range.Rda', id_type)))
   search_seq <- seq(search_range[1], search_range[2], 1)
 
   #exclude known players from the search
@@ -73,10 +73,17 @@ scrape_new_ids <- function(
     min(search_range),
     max(final[, sprintf('%sid', id_type)]) + expand_range
   )
-  save(search_range, file = sprintf('data-raw/%s_search_range.Rda', id_type))
+  save(
+    search_range,
+    file = file.path('data-raw', sprintf('%s_search_range.Rda', id_type))
+  )
 
   #write the search space and data file
-  write.csv(final, file = sprintf('data-raw/%sids.csv', id_type), row.names = FALSE)
+  write.csv(
+    final,
+    file = file.path('data-raw', sprintf('%sids.csv', id_type)),
+    row.names = FALSE
+  )
 
   'OK'
 }
