@@ -8,7 +8,7 @@ Get the existing mlbids
 ```{r}
 
 extant_mlb <- read.csv(
-  'data-raw/mlbids.csv',
+  file.path('..', 'data-raw', 'mlbids.csv'),
   stringsAsFactors = FALSE
 )
 
