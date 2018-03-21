@@ -12,6 +12,8 @@ extant_mlb <- read.csv(
   stringsAsFactors = FALSE
 )
 
+id_type <- 'mlb'
+
 ```
 
 Limit to only missing dob
@@ -49,7 +51,7 @@ extant_mlb <- anti_join(extant_mlb, new_ids, by = 'mlbid')
 #bind extant and new
 final <- rbind(extant_mlb, new_ids)
 
-write.csv(final, file = sprintf('data-raw/%sids.csv', 'mlb'), row.names = FALSE)
+write.csv(final, file = sprintf(file.path('..', 'data-raw', '%sids.csv'), 'mlb'), row.names = FALSE)
 
 
 ```

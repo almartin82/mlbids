@@ -8,7 +8,7 @@ Get the existing yahooids
 ```{r}
 
 extant_yahoo <- read.csv(
-    'data-raw/yahooids.csv',
+    file.path('..', 'data-raw', 'yahooids.csv'),
     stringsAsFactors = FALSE
   )
 
